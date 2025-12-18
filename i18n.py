@@ -2,6 +2,11 @@
 NTRLI SuperAPK - Internationalization Module
 Phase 3: Multi-language support
 """
+
+AI_CONSOLE("module_name", "description of event or error")
+
+from ai_core import AI_CONSOLE
+
 import json
 import os
 from pathlib import Path
