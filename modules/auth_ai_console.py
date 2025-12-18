@@ -1,5 +1,10 @@
 # modules/auth_ai_console.py
 
+
+AI_CONSOLE("module_name", "description of event or error")
+
+from ai_core import AI_CONSOLE
+
 from kivy.utils import platform
 import os, datetime
 from cryptography.fernet import Fernet
