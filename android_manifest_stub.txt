@@ -1,0 +1,16 @@
+# android_manifest_stub.txt
+# BRANCH: main
+# ROLE: Manifest intent documentation (NON-EXECUTING)
+
+This file documents REQUIRED Android manifest constraints
+to preserve durability.
+
+RULES:
+- No INTERNET permission required at start
+- No BILLING permission required at start
+- Permissions added only when features enabled
+
+Example (DO NOT AUTO-ADD):
+
+<uses-permission android:name="android.permission.INTERNET" />
+<uses-permission android:name="com.android.vending.BILLING" />
