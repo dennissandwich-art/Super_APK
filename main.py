@@ -3,6 +3,10 @@ NTRLI SuperAPK - Main Application Entry Point
 Phase 0: Minimal Stable Core with AI Self-Healing
 """
 
+self.kernel = AppKernel()
+self.kernel.on_start()
+
+
 import os
 import sys
 import traceback
