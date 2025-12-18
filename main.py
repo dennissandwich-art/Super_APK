@@ -1,10 +1,12 @@
 # main.py
 # BRANCH: main
-# ROLE: Platform entrypoint (FROZEN)
+# ROLE: UI ENTRYPOINT (PLATFORM SAFE)
 
 from kivy.app import App
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.label import Label
+
+from app_kernel import AppKernel
 
 
 class RootLayout(BoxLayout):
@@ -22,11 +24,8 @@ class RootLayout(BoxLayout):
 
 class SuperAPKApp(App):
     def build(self):
-        # HARD RULE:
-        # - No network calls
-        # - No Stripe
-        # - No analytics
-        # - UI must be first live object
+        self.kernel = AppKernel()
+        self.kernel.initialize()
         return RootLayout()
 
 
