@@ -19,8 +19,8 @@ YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 
 # Directories
-APP_DIR="app1"
-BUILD_DIR="$APP_DIR/.buildozer"
+APP_DIR="."
+BUILD_DIR=".buildozer"
 
 # Functions
 log_info() {
@@ -95,18 +95,18 @@ phase1_setup() {
 }
 
 phase2_setup() {
-    log_info "========== PHASE 2: NEWS & ECOMMERCE =========="
-    
+    log_info "========== PHASE 2: NEWS & ECOMMERCE (with Stripe) =========="
+
     log_info "Installing Phase 2 dependencies..."
-    pip3 install --user feedparser==6.0.10 pillow==10.2.0 sqlalchemy==2.0.25
-    
+    pip3 install --user feedparser==6.0.10 pillow==10.2.0 sqlalchemy==2.0.25 stripe==7.0.0
+
     # Update buildozer.spec
-    sed -i 's/cryptography==41.0.7/cryptography==41.0.7,feedparser==6.0.10,pillow==10.2.0,sqlalchemy==2.0.25/' $APP_DIR/buildozer.spec
-    
+    sed -i 's/cryptography==41.0.7/cryptography==41.0.7,feedparser==6.0.10,pillow==10.2.0,sqlalchemy==2.0.25,stripe==7.0.0/' $APP_DIR/buildozer.spec
+
     # Add POST_NOTIFICATIONS permission
     sed -i 's/READ_EXTERNAL_STORAGE/READ_EXTERNAL_STORAGE,POST_NOTIFICATIONS/' $APP_DIR/buildozer.spec
-    
-    log_info "Phase 2 setup complete"
+
+    log_info "Phase 2 setup complete (Stripe payment integration ready!)"
 }
 
 phase3_setup() {

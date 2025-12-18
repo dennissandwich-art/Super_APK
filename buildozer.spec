@@ -29,7 +29,7 @@ requirements = python3==3.11.8,kivy==2.3.1,kivymd==1.1.1
 # requests==2.31.0,pysocks==1.7.1,cryptography==41.0.7
 
 # PHASE 2: Add these after Phase 1 works
-# feedparser==6.0.10,pillow==10.2.0,sqlalchemy==2.0.25
+# feedparser==6.0.10,pillow==10.2.0,sqlalchemy==2.0.25,stripe==7.0.0
 
 # PHASE 3: Add these after Phase 2 works
 # flask==3.0.2,anthropic==0.18.0,openai==1.12.0,babel==2.14.0
