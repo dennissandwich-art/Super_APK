@@ -1,34 +1,25 @@
 # main.py
 # BRANCH: main
-# ROLE: UI ENTRYPOINT (PLATFORM SAFE)
+# ROLE: UI ENTRYPOINT (BOOT-FIRST, PLATFORM SAFE)
 
 from kivy.app import App
-from kivy.uix.boxlayout import BoxLayout
-from kivy.uix.label import Label
 
 from app_kernel import AppKernel
+from ui_router import UIRouter
 from lifecycle_hooks import LifecycleHooks
-
-
-class RootLayout(BoxLayout):
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self.orientation = "vertical"
-        self.add_widget(
-            Label(
-                text="Super_APK",
-                halign="center",
-                valign="middle"
-            )
-        )
 
 
 class SuperAPKApp(App):
     def build(self):
         self.kernel = AppKernel()
         self.lifecycle = LifecycleHooks()
+        self.router = UIRouter()
+
+        # Kernel init must NEVER block UI
         self.kernel.initialize()
-        return RootLayout()
+
+        # UI boots immediately
+        return self.router.route_initial()
 
     def on_pause(self):
         self.lifecycle.on_pause()
