@@ -1,17 +1,11 @@
 # app_kernel.py
 # BRANCH: main
-# ROLE: Core application kernel (LOGIC ONLY)
-
-from feature_flags import (
-    FEATURE_ANALYTICS,
-    FEATURE_STRIPE,
-    FEATURE_NETWORK,
-    FEATURE_DEBUG,
-)
+# ROLE: Core application kernel (FINAL, LOCKED)
 
 from kernel_state import KernelState
 from error_boundary import ErrorBoundary
 from safe_logger import SafeLogger
+from kernel_boot import build_feature_snapshot
 
 
 class AppKernel:
@@ -19,19 +13,17 @@ class AppKernel:
         self.state = KernelState()
         self.errors = ErrorBoundary()
         self.logger = SafeLogger()
+        self.features = None
 
     def initialize(self):
         try:
+            self.features = build_feature_snapshot()
             self.state.mark_initialized()
-            self.state.features_enabled = {
-                "FEATURE_ANALYTICS": FEATURE_ANALYTICS,
-                "FEATURE_STRIPE": FEATURE_STRIPE,
-                "FEATURE_NETWORK": FEATURE_NETWORK,
-                "FEATURE_DEBUG": FEATURE_DEBUG,
-            }
-            self.logger.log("Kernel initialized")
+            self.logger.log("Kernel initialized with feature snapshot")
         except Exception as e:
             self.errors.capture(e, context="kernel.initialize")
 
     def is_feature_enabled(self, feature_name: str) -> bool:
-        return self.state.features_enabled.get(feature_name, False)
+        if not self.features:
+            return False
+        return self.features.enabled(feature_name)
