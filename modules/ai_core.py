@@ -1,5 +1,9 @@
 # ai_core.py
 
+AI_CONSOLE("module_name", "description of event or error")
+
+from ai_core import AI_CONSOLE
+
 import os
 import datetime
 from kivy.utils import platform
