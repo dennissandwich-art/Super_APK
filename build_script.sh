@@ -5,6 +5,10 @@
 # Phone-only execution - No PC required
 ###############################################################################
 
+
+AI_CONSOLE("module_name", "description of event or error")
+
+from ai_core import AI_CONSOLE
 set -e
 
 echo "====================================="
