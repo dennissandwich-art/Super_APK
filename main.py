@@ -7,6 +7,7 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.label import Label
 
 from app_kernel import AppKernel
+from lifecycle_hooks import LifecycleHooks
 
 
 class RootLayout(BoxLayout):
@@ -25,8 +26,19 @@ class RootLayout(BoxLayout):
 class SuperAPKApp(App):
     def build(self):
         self.kernel = AppKernel()
+        self.lifecycle = LifecycleHooks()
         self.kernel.initialize()
         return RootLayout()
+
+    def on_pause(self):
+        self.lifecycle.on_pause()
+        return True
+
+    def on_resume(self):
+        self.lifecycle.on_resume()
+
+    def on_stop(self):
+        self.lifecycle.on_stop()
 
 
 if __name__ == "__main__":
