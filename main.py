@@ -2,7 +2,6 @@
 NTRLI SuperAPK - Main Application Entry Point
 Phase 0: Minimal Stable Core with AI Self-Healing
 """
-from ai_core import AI_CONSOLE, self_healf
 
 import os
 import sys
