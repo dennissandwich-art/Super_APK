@@ -20,6 +20,20 @@ from kivymd.app import MDApp
 from kivymd.uix.button import MDRaisedButton
 from kivymd.uix.screen import MDScreen
 
+class NTRLIApp(App):
+    def build(self):
+        # your existing UI setup
+        pass
+
+    def on_start(self):
+        # AI console startup
+        from ai_core import AI_CONSOLE, self_healf
+
+        AI_CONSOLE("boot", "Application starting")  # Logs app launch
+        self_healf(context="boot")                  # Performs live diagnostics
+
+        # Continue with any UI setup after diagnostics
+
 # Crash log path
 CRASH_LOG = "/sdcard/superbot_crash.log"
 AI_CONSOLE_LOG = "/sdcard/AI_consoles_main.log"
