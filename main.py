@@ -19,6 +19,9 @@ from kivymd.app import MDApp
 from kivymd.uix.button import MDRaisedButton
 from kivymd.uix.screen import MDScreen
 
+from app_kernel import AppKernel
+
+
 class NTRLIApp(App):
     def build(self):
         # your existing UI setup
