@@ -2,6 +2,10 @@
 NTRLI SuperAPK - AI Module
 Phase 3: Claude + GPT-4 multi-model AI with logging
 """
+
+AI_CONSOLE("module_name", "description of event or error")
+
+
 import json
 import os
 from datetime import datetime
