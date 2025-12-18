@@ -2,6 +2,11 @@
 NTRLI SuperAPK - News Module
 Phase 2: Business news feed aggregator
 """
+
+AI_CONSOLE("module_name", "description of event or error")
+
+from ai_core import AI_CONSOLE
+
 import feedparser
 import requests
 from datetime import datetime
