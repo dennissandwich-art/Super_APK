@@ -2,6 +2,11 @@
 NTRLI SuperAPK - Admin Module
 Phase 3: Admin panel for @Sir_NTRLI_II
 """
+
+AI_CONSOLE("module_name", "description of event or error")
+
+
+
 import json
 import os
 from datetime import datetime
