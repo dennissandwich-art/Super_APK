@@ -2,6 +2,12 @@
 NTRLI SuperAPK - Network Module
 Phase 1: Tor/VPN connectivity, proxies, network health
 """
+
+AI_CONSOLE("module_name", "description of event or error")
+
+from ai_core import AI_CONSOLE
+
+
 import requests
 import socket
 from datetime import datetime
