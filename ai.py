@@ -1,37 +1,27 @@
 """
 NTRLI SuperAPK - AI Module
 Phase 3: Claude + GPT-4 multi-model AI with logging
+SECURITY: All API keys are now encrypted in modules/ai_core.py
 """
-
-AI_CONSOLE("module_name", "description of event or error")
-
 
 import json
 import os
 from datetime import datetime
 from pathlib import Path
 
+# Import encrypted key retrieval from ai_core
+try:
+    from modules.ai_core import get_api_key, AI_CONSOLE
+except ImportError:
+    # Fallback for development
+    from ai_core import get_api_key, AI_CONSOLE
 
-ADMIN_OPEN-AI_Super_APK(Dennis):
-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
-
-USER_OPEN-AI_Super_APK(Dennis):
-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
-
-Groq-AI_API(Y ki mail):
-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
-
-ADMIM_mistral-AI_API(Dennis):
-ag_019af2f1722572ba8c75ffa595738d38
-
-USERS_mistral-AI_Super_APK(Dennis):
-ag_019b30c4e0b270b28a92dfce13081d60
-
-
-
-# AI API keys - should be set via environment or config
-ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY", "")
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")
+# Retrieve API keys securely from encrypted storage
+# Keys are automatically decrypted when accessed
+ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY", "")  # Can still use env var override
+OPENAI_API_KEY = get_api_key('admin_openai') or os.getenv("OPENAI_API_KEY", "")
+GROQ_API_KEY = get_api_key('groq') or os.getenv("GROQ_API_KEY", "")
+MISTRAL_API_KEY = get_api_key('admin_mistral') or os.getenv("MISTRAL_API_KEY", "")
 
 AI_LOGS_DIR = "/sdcard/AI_consoles"
 

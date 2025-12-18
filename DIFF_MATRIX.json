@@ -1,0 +1,178 @@
+{
+  "generated": "2025-12-18T20:30:00Z",
+  "branches_analyzed": ["main", "claude/analyze-super-apk-TtT4v", "claude/setup-stripe-align-code-cIjhy"],
+  "files": [
+    {
+      "file": "app_kernel.py",
+      "present_in": ["main", "analyze"],
+      "semantic_diff": "Main has basic kernel. Analyze has 'auto-recovery' with error strategies but NO ENFORCEMENT - recovery methods are cosmetic, no invariant checking, no crash-on-violation. Claims self-healing but just logs and returns booleans.",
+      "taxonomy_levels": ["conceptual", "logical"],
+      "risk": "MEDIUM",
+      "verdict": "SALVAGE - keep structure, add real enforcement"
+    },
+    {
+      "file": "state_manager.py",
+      "present_in": ["analyze"],
+      "semantic_diff": "Redux-style state management with dispatch/reducer pattern. Time-travel debugging support. Immutable updates via deepcopy. GOOD DESIGN but not enforced - modules can bypass and mutate state directly. No runtime guards.",
+      "taxonomy_levels": ["conceptual", "logical", "physical"],
+      "risk": "LOW",
+      "verdict": "KEEP - add enforcement that violations crash"
+    },
+    {
+      "file": "secure_storage.py",
+      "present_in": ["analyze"],
+      "semantic_diff": "Claims encryption but imports encrypt/decrypt from ai_core which is HOMEGROWN CRYPTO. Hardcoded /sdcard paths. No keyring integration. Sets chmod 0600 which is good intent but the crypto is fake.",
+      "taxonomy_levels": ["conceptual", "logical"],
+      "risk": "HIGH",
+      "verdict": "SALVAGE - remove fake crypto, use python-keyring or stub"
+    },
+    {
+      "file": "payment.py",
+      "present_in": ["analyze"],
+      "semantic_diff": "Full Stripe integration claiming PCI-DSS Level 1 compliance. NO IDEMPOTENCY KEYS on PaymentIntent creation. Has webhook verification method but no replay protection. Has 3D Secure request but claims compliance without implementation. DANGEROUS.",
+      "taxonomy_levels": ["conceptual"],
+      "risk": "FATAL",
+      "verdict": "QUARANTINE - move to sandbox/stripe-experiment/, strip compliance claims"
+    },
+    {
+      "file": "offline_manager.py",
+      "present_in": ["analyze"],
+      "semantic_diff": "Operation queuing with priority and retry. Reasonable design. Executes arbitrary operation types. No invariant validation. Magic recovery with no guarantees. Calls payment.py directly.",
+      "taxonomy_levels": ["conceptual", "logical", "physical"],
+      "risk": "MEDIUM",
+      "verdict": "SALVAGE - decouple from payment, add failure modes"
+    },
+    {
+      "file": "monitoring.py",
+      "present_in": ["analyze"],
+      "semantic_diff": "Performance tracking, session analytics, event logging. Reasonable implementation. Context managers for timing. No external dependencies. Safe.",
+      "taxonomy_levels": ["conceptual", "logical", "physical", "operational"],
+      "risk": "LOW",
+      "verdict": "KEEP"
+    },
+    {
+      "file": "main.py",
+      "present_in": ["main", "analyze", "stripe"],
+      "semantic_diff": "Main/analyze have similar Kivy app structure. Stripe branch has KivyMD with different architecture. Main has basic kernel integration. Stripe branch is divergent experiment.",
+      "taxonomy_levels": ["conceptual", "logical", "physical"],
+      "risk": "LOW",
+      "verdict": "KEEP main/analyze version, QUARANTINE stripe version"
+    },
+    {
+      "file": "network.py",
+      "present_in": ["main", "analyze"],
+      "semantic_diff": "Network manager with connectivity checking, Tor/VPN support. Reasonable implementation.",
+      "taxonomy_levels": ["conceptual", "logical", "physical"],
+      "risk": "LOW",
+      "verdict": "KEEP"
+    },
+    {
+      "file": "auth.py",
+      "present_in": ["main", "analyze"],
+      "semantic_diff": "Authentication module. Needs review for security.",
+      "taxonomy_levels": ["conceptual", "logical", "physical"],
+      "risk": "MEDIUM",
+      "verdict": "KEEP - review for vulnerabilities"
+    },
+    {
+      "file": "ecommerce.py",
+      "present_in": ["main", "analyze"],
+      "semantic_diff": "E-commerce with cart and checkout. Couples to payment module.",
+      "taxonomy_levels": ["conceptual", "logical", "physical"],
+      "risk": "MEDIUM",
+      "verdict": "SALVAGE - decouple from payment"
+    },
+    {
+      "file": "admin.py",
+      "present_in": ["main", "analyze"],
+      "semantic_diff": "Admin functionality.",
+      "taxonomy_levels": ["conceptual", "logical", "physical"],
+      "risk": "LOW",
+      "verdict": "KEEP"
+    },
+    {
+      "file": "ai.py",
+      "present_in": ["main", "analyze"],
+      "semantic_diff": "AI integration module.",
+      "taxonomy_levels": ["conceptual", "logical"],
+      "risk": "MEDIUM",
+      "verdict": "KEEP - sandbox behind adapters"
+    },
+    {
+      "file": "news.py",
+      "present_in": ["main", "analyze"],
+      "semantic_diff": "News feed functionality.",
+      "taxonomy_levels": ["conceptual", "logical", "physical"],
+      "risk": "LOW",
+      "verdict": "KEEP"
+    },
+    {
+      "file": "i18n.py",
+      "present_in": ["main", "analyze"],
+      "semantic_diff": "Internationalization module.",
+      "taxonomy_levels": ["conceptual", "logical", "physical"],
+      "risk": "LOW",
+      "verdict": "KEEP"
+    },
+    {
+      "file": "modules/ai_core.py",
+      "present_in": ["main", "analyze"],
+      "semantic_diff": "Core AI console with HOMEGROWN encrypt/decrypt functions. These are NOT secure crypto - just Fernet with hardcoded or derived keys. Used by secure_storage.py.",
+      "taxonomy_levels": ["conceptual", "logical"],
+      "risk": "HIGH",
+      "verdict": "SALVAGE - remove fake crypto functions, keep logging"
+    },
+    {
+      "file": "tests/",
+      "present_in": ["analyze"],
+      "semantic_diff": "Test directory with test_auth.py, test_payment.py, run_tests.sh. Need to verify tests actually assert failures, not just success paths.",
+      "taxonomy_levels": ["operational"],
+      "risk": "MEDIUM",
+      "verdict": "SALVAGE - add failure path tests"
+    },
+    {
+      "file": ".gitignore",
+      "present_in": ["analyze", "stripe"],
+      "semantic_diff": "Gitignore exists in analyze and stripe branches. Need to ensure secrets are blocked.",
+      "taxonomy_levels": ["operational"],
+      "risk": "LOW",
+      "verdict": "KEEP - enhance for secrets"
+    },
+    {
+      "file": ".env.example",
+      "present_in": ["analyze", "stripe"],
+      "semantic_diff": "Example env file showing expected variables.",
+      "taxonomy_levels": ["operational"],
+      "risk": "LOW",
+      "verdict": "KEEP"
+    }
+  ],
+  "branch_verdicts": {
+    "main": {
+      "role": "Safe baseline",
+      "status": "Honest but primitive",
+      "risk": "LOW",
+      "verdict": "NOT SUFFICIENT but safe"
+    },
+    "claude/analyze-super-apk-TtT4v": {
+      "role": "Architectural direction",
+      "status": "Conceptually strongest but enforcement missing",
+      "risk": "MEDIUM",
+      "verdict": "BASE FOR main-v2 after cleanup"
+    },
+    "claude/setup-stripe-align-code-cIjhy": {
+      "role": "Payment experiment",
+      "status": "Divergent structure, premature, unsafe",
+      "risk": "HIGH/FATAL",
+      "verdict": "QUARANTINE - NEVER MERGE DIRECTLY"
+    }
+  },
+  "critical_issues": [
+    "payment.py has NO idempotency keys - violates Stripe requirements",
+    "payment.py claims PCI-DSS Level 1 with no evidence",
+    "secure_storage.py uses homegrown crypto from ai_core",
+    "app_kernel.py auto-recovery is cosmetic - no invariant enforcement",
+    "state_manager.py not enforced - modules can bypass",
+    "No failure-path tests exist"
+  ]
+}
