@@ -1,11 +1,13 @@
 """
 NTRLI SuperAPK - Main Application Entry Point
-Phase 0: Minimal Stable Core with AI Self-Healing
+Enhanced v1.0.11 with:
+- Secure API key management
+- Stripe payment integration
+- Offline-first architecture
+- State management
+- Monitoring & analytics
+- Auto error recovery
 """
-
-self.kernel = AppKernel()
-self.kernel.on_start()
-
 
 import os
 import sys
@@ -23,22 +25,10 @@ from kivymd.app import MDApp
 from kivymd.uix.button import MDRaisedButton
 from kivymd.uix.screen import MDScreen
 
+# Import enhanced modules
 from app_kernel import AppKernel
-
-
-class NTRLIApp(App):
-    def build(self):
-        # your existing UI setup
-        pass
-
-    def on_start(self):
-        # AI console startup
-        from ai_core import AI_CONSOLE, self_healf
-
-        AI_CONSOLE("boot", "Application starting")  # Logs app launch
-        self_healf(context="boot")                  # Performs live diagnostics
-
-        # Continue with any UI setup after diagnostics
+from state_manager import AppState
+from monitoring import MonitoringManager
 
 # Crash log path
 CRASH_LOG = "/sdcard/superbot_crash.log"
@@ -152,23 +142,41 @@ class HomeScreen(MDScreen):
         print("Settings pressed")
 
 class NTRLIApp(MDApp):
-    """Main application class"""
-    
+    """
+    Main application class - Enhanced v1.0.11
+    """
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.ai_console = AIConsole(AI_CONSOLE_LOG)
         self.lazy_modules = {}
-        self.ai_console.log("=== NTRLI SuperAPK Initializing ===")
+
+        # Initialize enhanced systems
+        self.kernel = AppKernel()
+        self.state = AppState(self.ai_console)
+        self.monitoring = MonitoringManager(self.ai_console)
+
+        self.ai_console.log("=== NTRLI SuperAPK v1.0.11 Initializing ===")
+        self.monitoring.track_app_launch()
+
+        # Run self-healing
         self.self_healf()
+        self.kernel.on_start()
     
     def build(self):
+        # Material Design 3 theme
         self.theme_cls.primary_palette = "Blue"
         self.theme_cls.theme_style = "Dark"
-        
+        self.theme_cls.material_style = "M3"
+
         sm = ScreenManager()
         sm.add_widget(HomeScreen())
-        
-        self.ai_console.log("UI built successfully - Phase 0 complete")
+
+        # Update state
+        self.state.dispatch({"type": "APP_INITIALIZED"})
+        self.monitoring.track_screen_view("home")
+
+        self.ai_console.log("UI built - All systems online")
         return sm
     
     def lazy_load(self, module_name):
@@ -220,8 +228,11 @@ class NTRLIApp(MDApp):
     
     def on_start(self):
         self.ai_console.log("App started successfully")
-    
+        health = self.kernel.health_snapshot()
+        self.ai_console.log(f"Health: {health.get('health_status', 'unknown')}")
+
     def on_stop(self):
+        self.monitoring.track_app_close()
         self.ai_console.log("App stopped")
 
 if __name__ == "__main__":
