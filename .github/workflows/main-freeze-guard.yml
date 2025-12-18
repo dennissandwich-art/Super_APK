@@ -1,0 +1,43 @@
+# .github/workflows/main-freeze-guard.yml
+# BRANCH: claude-make-repo-public
+# ROLE: Enforce main branch durability rules
+
+name: Main Freeze Guard
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  freeze-guard:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Block forbidden changes in main
+        run: |
+          echo "Checking for forbidden changes in main branch..."
+
+          FORBIDDEN_PATTERNS=(
+            "import stripe"
+            "import requests"
+            "urllib"
+          )
+
+          FILES=$(git diff --name-only origin/main...HEAD)
+
+          for file in $FILES; do
+            if [[ "$file" == "main.py" ]]; then
+              for pattern in "${FORBIDDEN_PATTERNS[@]}"; do
+                if grep -R "$pattern" "$file"; then
+                  echo "❌ Forbidden pattern '$pattern' found in $file"
+                  exit 1
+                fi
+              done
+            fi
+          done
+
+          echo "✅ Main branch freeze rules respected"
