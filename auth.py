@@ -2,6 +2,10 @@
 NTRLI SuperAPK - Authentication Module
 Phase 1: Internal authentication (Telegram removed)
 """
+
+AI_CONSOLE("module_name", "description of event or error")
+
+
 import hashlib
 import json
 import os
