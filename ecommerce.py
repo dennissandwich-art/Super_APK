@@ -2,6 +2,11 @@
 NTRLI SuperAPK - E-commerce Module
 Phase 2: Product catalog, shopping cart, 400 NOK minimum order
 """
+
+
+AI_CONSOLE("module_name", "description of event or error")from ai_core import AI_CONSOLE
+
+
 import json
 import os
 from datetime import datetime
