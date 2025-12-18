@@ -1,26 +1,31 @@
 """
 NTRLI SuperAPK - Network Module
 Phase 1: Tor/VPN connectivity, proxies, network health
+Enhanced with async operations for better performance
 """
-
-AI_CONSOLE("module_name", "description of event or error")
-
-from ai_core import AI_CONSOLE
-
 
 import requests
 import socket
+import asyncio
 from datetime import datetime
+from concurrent.futures import ThreadPoolExecutor
+
+try:
+    from modules.ai_core import AI_CONSOLE
+except ImportError:
+    from ai_core import AI_CONSOLE
 
 class NetworkManager:
-    """Handles network connectivity, proxies, Tor/VPN"""
-    
+    """Handles network connectivity, proxies, Tor/VPN with async support"""
+
     def __init__(self, ai_console=None):
         self.ai_console = ai_console
         self.proxy_config = None
         self.tor_enabled = False
         self.vpn_enabled = False
-        self.log("NetworkManager initialized")
+        self.executor = ThreadPoolExecutor(max_workers=5)
+        self.timeout = 10  # Default timeout
+        self.log("NetworkManager initialized with async support")
     
     def log(self, msg, level="INFO"):
         if self.ai_console:
@@ -155,7 +160,7 @@ class NetworkManager:
             sock.settimeout(timeout)
             result = sock.connect_ex((host, port))
             sock.close()
-            
+
             if result == 0:
                 self.log(f"Port {port} on {host} is OPEN")
                 return True
@@ -165,3 +170,95 @@ class NetworkManager:
         except Exception as e:
             self.log(f"Port check failed: {e}", "ERROR")
             return False
+
+    # ========== ASYNC METHODS FOR PERFORMANCE ==========
+
+    async def async_make_request(self, url, method="GET", data=None, headers=None, timeout=None):
+        """
+        Async HTTP request with proxy support
+
+        Args:
+            url: Request URL
+            method: HTTP method (GET, POST)
+            data: Request data
+            headers: Request headers
+            timeout: Request timeout
+
+        Returns:
+            (success, response)
+        """
+        timeout = timeout or self.timeout
+        loop = asyncio.get_event_loop()
+
+        try:
+            # Run requests in thread pool to avoid blocking
+            response = await loop.run_in_executor(
+                self.executor,
+                lambda: self._sync_request(url, method, data, headers, timeout)
+            )
+            return True, response
+        except Exception as e:
+            self.log(f"Async request to {url} failed: {e}", "ERROR")
+            return False, str(e)
+
+    def _sync_request(self, url, method, data, headers, timeout):
+        """Helper for synchronous request in executor"""
+        kwargs = {
+            "timeout": timeout,
+            "headers": headers or {}
+        }
+
+        if self.proxy_config:
+            kwargs["proxies"] = self.proxy_config
+
+        if method.upper() == "GET":
+            return requests.get(url, **kwargs)
+        elif method.upper() == "POST":
+            kwargs["json"] = data
+            return requests.post(url, **kwargs)
+        else:
+            raise ValueError(f"Unsupported method: {method}")
+
+    async def async_check_connectivity_batch(self, urls=None):
+        """
+        Check connectivity to multiple URLs concurrently
+
+        Args:
+            urls: List of URLs to check (uses defaults if None)
+
+        Returns:
+            dict of {url: (success, latency_ms)}
+        """
+        test_urls = urls or [
+            "https://www.google.com",
+            "https://www.cloudflare.com",
+            "https://1.1.1.1"
+        ]
+
+        self.log(f"Checking connectivity to {len(test_urls)} URLs concurrently")
+
+        tasks = [self._async_ping_url(url) for url in test_urls]
+        results = await asyncio.gather(*tasks, return_exceptions=True)
+
+        return dict(zip(test_urls, results))
+
+    async def _async_ping_url(self, url):
+        """Async ping a single URL"""
+        import time
+        start = time.time()
+
+        try:
+            loop = asyncio.get_event_loop()
+            response = await loop.run_in_executor(
+                self.executor,
+                lambda: requests.get(url, timeout=5)
+            )
+
+            latency = (time.time() - start) * 1000  # Convert to ms
+
+            if response.status_code == 200:
+                return True, latency
+            return False, latency
+
+        except Exception as e:
+            return False, 0
