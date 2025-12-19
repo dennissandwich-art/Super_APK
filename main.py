@@ -1,24 +1,30 @@
 # main.py
 # BRANCH: main
-# ROLE: UI ENTRYPOINT (BOOT-FIRST, PLATFORM SAFE)
+# ROLE: UI ENTRYPOINT (EVENT-WIRED)
 
 from kivy.app import App
 
 from app_kernel import AppKernel
-from ui_router import UIRouter
 from lifecycle_hooks import LifecycleHooks
+from kernel_events import KernelEvents
+from kernel_ready import emit_ready
+from ui_router import UIRouter
+from ui_events import UIEvents
 
 
 class SuperAPKApp(App):
     def build(self):
         self.kernel = AppKernel()
         self.lifecycle = LifecycleHooks()
+        self.events = KernelEvents()
         self.router = UIRouter()
 
-        # Kernel init must NEVER block UI
-        self.kernel.initialize()
+        self.ui_events = UIEvents(self.events)
+        self.ui_events.bind()
 
-        # UI boots immediately
+        self.kernel.initialize()
+        emit_ready(self.events)
+
         return self.router.route_initial()
 
     def on_pause(self):
