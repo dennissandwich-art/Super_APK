@@ -1,5 +1,5 @@
 # permission_gate.py
-# BRANCH: 
+# BRANCH: main
 # ROLE: Permission gating (ANDROID-SAFE, READ-ONLY)
 
 """
